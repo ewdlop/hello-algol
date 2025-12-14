@@ -1,4 +1,4 @@
-# GitHub Wiki Integration
+ALGOL# GitHub Wiki Integration
 
 This repository is configured to automatically sync its documentation to a GitHub Wiki.
 
