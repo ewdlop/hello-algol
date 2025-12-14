@@ -90,6 +90,8 @@ def convert_mkdocs_to_wiki_link(text):
         wiki_page = link_path.replace('.md', '').replace('/', '-').replace('_', '-')
         # Remove leading dots and slashes
         wiki_page = re.sub(r'^[./]+', '', wiki_page)
+        # Remove trailing dashes (from directory paths ending with /)
+        wiki_page = wiki_page.rstrip('-')
         # Remove index references
         wiki_page = wiki_page.replace('-index', '')
         
