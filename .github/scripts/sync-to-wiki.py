@@ -10,11 +10,39 @@ wiki pages with proper linking.
 import os
 import re
 import shutil
+import subprocess
 import yaml
 from pathlib import Path
 
+# Get docs directory from mkdocs.yml or use default
+def get_docs_directory():
+    """
+    Get the documentation directory from mkdocs.yml.
+    Falls back to 'docs' if not specified or if build dir doesn't exist.
+    """
+    mkdocs_config = Path("mkdocs.yml")
+    docs_dir = "docs"
+    
+    if mkdocs_config.exists():
+        try:
+            with open(mkdocs_config, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+                configured_dir = config.get('docs_dir', 'docs')
+                
+                # If the configured directory exists, use it
+                if Path(configured_dir).exists():
+                    docs_dir = configured_dir
+                # Otherwise, try the default 'docs' directory
+                elif Path('docs').exists():
+                    docs_dir = 'docs'
+                    print(f"Note: mkdocs.yml specifies '{configured_dir}' but using 'docs' as source")
+        except Exception as e:
+            print(f"Warning: Could not read mkdocs.yml: {e}, using default 'docs' directory")
+    
+    return docs_dir
+
 # Directories
-DOCS_DIR = Path("docs")
+DOCS_DIR = Path(get_docs_directory())
 WIKI_DIR = Path("wiki")
 ASSETS_DIR = DOCS_DIR / "assets"
 
@@ -80,7 +108,6 @@ def convert_image_paths(text, source_file):
             return match.group(0)
         
         # Get repository name from environment or git config
-        import subprocess
         github_repo = os.environ.get('GITHUB_REPOSITORY')
         
         if not github_repo:
