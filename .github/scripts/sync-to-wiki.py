@@ -96,19 +96,24 @@ def convert_image_paths(text, source_file):
                 # Parse repository from URL
                 # e.g., https://github.com/user/repo.git or git@github.com:user/repo.git
                 # Check if this is a GitHub URL using more secure pattern matching
-                if remote_url.startswith('https://github.com/') or \
-                   remote_url.startswith('git@github.com:') or \
-                   remote_url.startswith('http://github.com/'):
-                    # Extract the repository path after github.com
-                    if 'github.com/' in remote_url:
-                        repo_part = remote_url.split('github.com/')[-1]
-                    elif 'github.com:' in remote_url:
-                        repo_part = remote_url.split('github.com:')[-1]
-                    else:
-                        print(f"Warning: Unexpected GitHub URL format for image {image_path}")
-                        return match.group(0)
+                repo_part = None
+                
+                if remote_url.startswith('https://github.com/'):
+                    # Extract after https://github.com/
+                    repo_part = remote_url[len('https://github.com/'):]
+                elif remote_url.startswith('http://github.com/'):
+                    # Extract after http://github.com/
+                    repo_part = remote_url[len('http://github.com/'):]
+                elif remote_url.startswith('git@github.com:'):
+                    # Extract after git@github.com:
+                    repo_part = remote_url[len('git@github.com:'):]
+                
+                if repo_part:
                     repo_part = repo_part.strip('/').replace('.git', '')
                     github_repo = repo_part
+                else:
+                    print(f"Warning: Not a GitHub URL, cannot convert image {image_path}")
+                    return match.group(0)
             except:
                 print(f"Warning: Could not determine repository name for image {image_path}")
                 return match.group(0)
