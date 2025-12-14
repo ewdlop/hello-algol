@@ -40,7 +40,12 @@ def convert_mkdocs_to_wiki_link(text):
     - [Link](../other/page.md) -> [Link](other-page)
     """
     # Pattern for markdown links: [text](path)
+    # But NOT images which start with ![text](path)
     def replace_link(match):
+        # Check if this is an image (preceded by !)
+        if match.start() > 0 and text[match.start() - 1] == '!':
+            return match.group(0)
+        
         link_text = match.group(1)
         link_path = match.group(2)
         
@@ -90,9 +95,19 @@ def convert_image_paths(text, source_file):
                 remote_url = result.stdout.strip()
                 # Parse repository from URL
                 # e.g., https://github.com/user/repo.git or git@github.com:user/repo.git
-                if 'github.com' in remote_url:
-                    repo_part = remote_url.split('github.com')[-1]
-                    repo_part = repo_part.strip('/:').replace('.git', '')
+                # Check if this is a GitHub URL using more secure pattern matching
+                if remote_url.startswith('https://github.com/') or \
+                   remote_url.startswith('git@github.com:') or \
+                   remote_url.startswith('http://github.com/'):
+                    # Extract the repository path after github.com
+                    if 'github.com/' in remote_url:
+                        repo_part = remote_url.split('github.com/')[-1]
+                    elif 'github.com:' in remote_url:
+                        repo_part = remote_url.split('github.com:')[-1]
+                    else:
+                        print(f"Warning: Unexpected GitHub URL format for image {image_path}")
+                        return match.group(0)
+                    repo_part = repo_part.strip('/').replace('.git', '')
                     github_repo = repo_part
             except:
                 print(f"Warning: Could not determine repository name for image {image_path}")
