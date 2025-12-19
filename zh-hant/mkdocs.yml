@@ -174,5 +174,6 @@ nav:
     - 16.1 &nbsp; 程式設計環境安裝: chapter_appendix/installation.md
     - 16.2 &nbsp; 一起參與創作: chapter_appendix/contribution.md
     - 16.3 &nbsp; 術語表: chapter_appendix/terminology.md
+    - 16.4 &nbsp; 數學證明技巧: chapter_appendix/proof_techniques.md
   - 參考文獻:
     - chapter_reference/index.md

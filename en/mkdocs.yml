@@ -176,5 +176,6 @@ nav:
     - 16.1 Installation: chapter_appendix/installation.md
     - 16.2 Contributing: chapter_appendix/contribution.md
     - 16.3 Terminology: chapter_appendix/terminology.md
+    - 16.4 Proof Techniques: chapter_appendix/proof_techniques.md
   - References:
     - chapter_reference/index.md
